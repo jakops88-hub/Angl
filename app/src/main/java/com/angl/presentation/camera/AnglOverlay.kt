@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.angl.domain.engine.*
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -402,12 +403,12 @@ private fun RotationArc(
         // Draw arrowhead at end of arc
         if (sweepAngle > 30f) {
             val endAngle = startAngle + if (clockwise) sweepAngle else -sweepAngle
-            val endAngleRad = Math.toRadians(endAngle.toDouble())
+            val endAngleRad = endAngle * PI / 180.0
             val arrowX = centerX + radius * cos(endAngleRad).toFloat()
             val arrowY = centerY + radius * sin(endAngleRad).toFloat()
             
             val arrowSize = 30f
-            val arrowAngle = endAngleRad + if (clockwise) Math.PI / 2 else -Math.PI / 2
+            val arrowAngle = endAngleRad + if (clockwise) PI / 2 else -PI / 2
             
             // Arrow tip
             val tipX = arrowX + arrowSize * cos(arrowAngle).toFloat()

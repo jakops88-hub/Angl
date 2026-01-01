@@ -2,6 +2,7 @@ package com.angl.domain.engine
 
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 
@@ -50,7 +51,7 @@ class CompositionEngine {
 
         // 1. Check shoulder alignment (horizon level)
         val shoulderAngle = calculateShoulderAngle(leftShoulder, rightShoulder)
-        val shoulderAngleDegrees = Math.toDegrees(shoulderAngle)
+        val shoulderAngleDegrees = shoulderAngle * 180.0 / PI
         
         if (abs(shoulderAngleDegrees) > SHOULDER_ANGLE_THRESHOLD_DEGREES) {
             val direction = if (shoulderAngleDegrees > 0) "LEFT" else "RIGHT"
@@ -155,7 +156,7 @@ class CompositionEngine {
 
         // Check shoulder alignment
         val shoulderAngle = calculateShoulderAngle(leftShoulder, rightShoulder)
-        val shoulderAngleDegrees = Math.toDegrees(shoulderAngle)
+        val shoulderAngleDegrees = shoulderAngle * 180.0 / PI
         
         if (abs(shoulderAngleDegrees) > SHOULDER_ANGLE_THRESHOLD_DEGREES) {
             val rotationDirection = if (shoulderAngleDegrees > 0) 

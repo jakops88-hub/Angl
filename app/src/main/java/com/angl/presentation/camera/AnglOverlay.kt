@@ -5,13 +5,11 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -22,6 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.angl.domain.engine.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * AnglOverlay is a professional-grade AR overlay for real-time photo composition guidance.
@@ -403,21 +403,21 @@ private fun RotationArc(
         if (sweepAngle > 30f) {
             val endAngle = startAngle + if (clockwise) sweepAngle else -sweepAngle
             val endAngleRad = Math.toRadians(endAngle.toDouble())
-            val arrowX = centerX + radius * kotlin.math.cos(endAngleRad).toFloat()
-            val arrowY = centerY + radius * kotlin.math.sin(endAngleRad).toFloat()
+            val arrowX = centerX + radius * cos(endAngleRad).toFloat()
+            val arrowY = centerY + radius * sin(endAngleRad).toFloat()
             
             val arrowSize = 30f
             val arrowAngle = endAngleRad + if (clockwise) Math.PI / 2 else -Math.PI / 2
             
             // Arrow tip
-            val tipX = arrowX + arrowSize * kotlin.math.cos(arrowAngle).toFloat()
-            val tipY = arrowY + arrowSize * kotlin.math.sin(arrowAngle).toFloat()
+            val tipX = arrowX + arrowSize * cos(arrowAngle).toFloat()
+            val tipY = arrowY + arrowSize * sin(arrowAngle).toFloat()
             
             // Arrow wings
-            val wing1X = arrowX + (arrowSize * 0.6f) * kotlin.math.cos(arrowAngle + 0.5).toFloat()
-            val wing1Y = arrowY + (arrowSize * 0.6f) * kotlin.math.sin(arrowAngle + 0.5).toFloat()
-            val wing2X = arrowX + (arrowSize * 0.6f) * kotlin.math.cos(arrowAngle - 0.5).toFloat()
-            val wing2Y = arrowY + (arrowSize * 0.6f) * kotlin.math.sin(arrowAngle - 0.5).toFloat()
+            val wing1X = arrowX + (arrowSize * 0.6f) * cos(arrowAngle + 0.5).toFloat()
+            val wing1Y = arrowY + (arrowSize * 0.6f) * sin(arrowAngle + 0.5).toFloat()
+            val wing2X = arrowX + (arrowSize * 0.6f) * cos(arrowAngle - 0.5).toFloat()
+            val wing2Y = arrowY + (arrowSize * 0.6f) * sin(arrowAngle - 0.5).toFloat()
             
             drawLine(
                 color = color,

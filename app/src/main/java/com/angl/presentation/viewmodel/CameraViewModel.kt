@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.angl.data.analyzer.PoseAnalyzer
 import com.angl.domain.engine.CompositionEngine
 import com.angl.domain.engine.FeedbackStateExtended
+import com.angl.domain.engine.GuidanceType
 import com.angl.domain.model.CameraError
 import com.angl.domain.model.CameraResult
 import com.angl.domain.repository.CameraRepository
@@ -33,6 +34,12 @@ class CameraViewModel @Inject constructor(
     private val compositionEngine: CompositionEngine
 ) : ViewModel() {
 
+    companion object {
+        // Camera frame dimensions - matches ImageAnalysis resolution in CameraManager
+        private const val CAMERA_FRAME_WIDTH = 640f
+        private const val CAMERA_FRAME_HEIGHT = 480f
+    }
+
     private val _cameraState = MutableStateFlow<CameraState>(CameraState.Initial)
     val cameraState: StateFlow<CameraState> = _cameraState.asStateFlow()
 
@@ -56,17 +63,16 @@ class CameraViewModel @Inject constructor(
         .map { pose ->
             if (pose != null) {
                 // Analyze pose with composition engine
-                // Using default frame dimensions (will be updated with actual values)
                 compositionEngine.analyzePoseExtended(
                     pose = pose,
-                    frameWidth = 640f,
-                    frameHeight = 480f
+                    frameWidth = CAMERA_FRAME_WIDTH,
+                    frameHeight = CAMERA_FRAME_HEIGHT
                 )
             } else {
                 // No pose detected
                 FeedbackStateExtended.Warning(
                     message = "POSITION YOURSELF IN FRAME",
-                    guidanceType = com.angl.domain.engine.GuidanceType.None
+                    guidanceType = GuidanceType.None
                 )
             }
         }
@@ -75,7 +81,7 @@ class CameraViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = FeedbackStateExtended.Warning(
                 message = "INITIALIZING...",
-                guidanceType = com.angl.domain.engine.GuidanceType.None
+                guidanceType = GuidanceType.None
             )
         )
 

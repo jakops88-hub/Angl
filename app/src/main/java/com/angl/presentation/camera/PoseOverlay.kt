@@ -3,6 +3,7 @@ package com.angl.presentation.camera
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -37,7 +38,7 @@ fun PoseOverlay(
     val density = LocalDensity.current
     
     // Memoize screen size calculation to avoid recomputation on every recomposition
-    val targetSize = androidx.compose.runtime.remember(configuration.screenWidthDp, configuration.screenHeightDp, density) {
+    val targetSize = remember(configuration.screenWidthDp, configuration.screenHeightDp, density) {
         with(density) {
             IntSize(
                 configuration.screenWidthDp.dp.toPx().toInt(),

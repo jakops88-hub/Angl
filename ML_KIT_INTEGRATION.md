@@ -352,8 +352,9 @@ fun testMirroring() {
         isMirrored = true
     )
     
-    assertEquals(540f, result.x) // Mirrored X
-    assertEquals(100f, result.y) // Y unchanged
+    // Mirrored X: 640 - 100 = 540, then mapped (no scaling since same size)
+    assertEquals(540f, result.x, 0.1f) // Mirrored X
+    assertEquals(100f, result.y, 0.1f) // Y unchanged
 }
 ```
 

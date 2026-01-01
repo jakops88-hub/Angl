@@ -91,9 +91,7 @@ class PoseAnalyzer @Inject constructor() : ImageAnalysis.Analyzer {
             val mediaImage = imageProxy.image
             if (mediaImage == null) {
                 Log.w(TAG, "Image is null, skipping frame")
-                imageProxy.close()
-                _isProcessing.value = false
-                isProcessingFlag.set(false)
+                resetProcessingState(imageProxy)
                 return
             }
 
@@ -124,17 +122,23 @@ class PoseAnalyzer @Inject constructor() : ImageAnalysis.Analyzer {
                     // CRITICAL: Close ImageProxy immediately after processing
                     // This releases the frame and allows the next one to be processed
                     // Without this, frames will be dropped and FPS will suffer
-                    imageProxy.close()
-                    _isProcessing.value = false
-                    isProcessingFlag.set(false)
+                    resetProcessingState(imageProxy)
                 }
         } catch (e: Exception) {
             Log.e(TAG, "Error analyzing image", e)
             // Always close ImageProxy even on error
-            imageProxy.close()
-            _isProcessing.value = false
-            isProcessingFlag.set(false)
+            resetProcessingState(imageProxy)
         }
+    }
+
+    /**
+     * Resets processing state and releases the current frame.
+     * Ensures proper cleanup in all exit paths.
+     */
+    private fun resetProcessingState(imageProxy: ImageProxy) {
+        imageProxy.close()
+        _isProcessing.value = false
+        isProcessingFlag.set(false)
     }
 
     /**

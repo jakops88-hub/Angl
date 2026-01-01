@@ -108,6 +108,9 @@ class CompositionEngine {
      * Headroom is the space between the top of the head (nose landmark)
      * and the top of the frame. Good composition typically has 10-20% headroom.
      * 
+     * Note: In camera coordinates, Y=0 is at the top of the frame.
+     * A smaller noseY means the head is closer to the top (less headroom).
+     * 
      * @param nose Nose landmark (approximates top of head)
      * @param frameHeight Height of the camera frame
      * @return Headroom as a percentage (0.0 to 1.0)
@@ -115,8 +118,9 @@ class CompositionEngine {
     private fun calculateHeadroom(nose: PoseLandmark, frameHeight: Float): Float {
         val noseY = nose.position.y
         
-        // Headroom is the distance from nose to top of frame
+        // Headroom is the distance from top of frame (Y=0) to nose
         // Normalize by frame height to get percentage
+        // noseY directly represents the space from top, so we just normalize it
         val headroom = noseY / frameHeight
         
         return headroom

@@ -167,14 +167,12 @@ class SoundHelper @Inject constructor(
             .setAudioAttributes(audioAttributes)
             .build()
 
-        // Load success sound (we'll use system notification sound as placeholder)
-        // In production, add custom sound files to res/raw/
-        try {
-            // For now, we won't load actual sounds to avoid missing resources
-            // In production: successSoundId = soundPool.load(context, R.raw.success_sound, 1)
-        } catch (e: Exception) {
-            // Gracefully handle missing sound resources
-        }
+        // Note: Sound effects intentionally not loaded in this version
+        // In production, add custom sound files to res/raw/ and load them here:
+        // successSoundId = soundPool.load(context, R.raw.success_sound, 1)
+        // 
+        // For now, the app provides haptic-only feedback which is already
+        // effective for the user experience. Sound can be added in future versions.
     }
 
     /**
@@ -201,7 +199,8 @@ class SoundHelper @Inject constructor(
 
     /**
      * Releases sound pool resources.
-     * Should be called when the helper is no longer needed.
+     * Note: As a singleton, this should only be called when the app is shutting down.
+     * Currently unused but provided for completeness.
      */
     fun release() {
         soundPool.release()

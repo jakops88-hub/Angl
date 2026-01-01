@@ -149,12 +149,8 @@ private fun PermissionDeniedScreen(
         if (shouldShowRationale) {
             Spacer(modifier = Modifier.height(16.dp))
             
-            TextButton(onClick = { /* User can dismiss */ }) {
-                Text(
-                    text = "Maybe Later",
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                )
-            }
+            // Removed "Maybe Later" button as camera permission is required
+            // User can exit the app or use back button if they don't want to grant permission
         }
     }
 }

@@ -160,7 +160,8 @@ class CameraViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         cameraRepository.stopCamera()
-        soundHelper.release()
+        // Note: soundHelper.release() not called as it's a singleton
+        // and should persist for the app lifetime
     }
 }
 

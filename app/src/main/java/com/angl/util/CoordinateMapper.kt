@@ -84,7 +84,12 @@ object CoordinateMapper {
         val mappedX = (sourceX * scale) + offsetX
         val mappedY = (y * scale) + offsetY
 
-        // Clamp to target bounds to avoid drawing outside screen
+        // Clamp to target bounds to prevent drawing outside screen area
+        // Note: This ensures UI elements stay within visible bounds but may
+        // hide landmarks that are legitimately outside the frame during certain
+        // camera movements. For visualization purposes, clamping is preferred
+        // to avoid rendering artifacts. If you need to detect off-screen landmarks,
+        // check the original coordinates before clamping.
         val clampedX = mappedX.coerceIn(0f, targetSize.width.toFloat())
         val clampedY = mappedY.coerceIn(0f, targetSize.height.toFloat())
 

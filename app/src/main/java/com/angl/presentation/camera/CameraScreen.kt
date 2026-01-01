@@ -92,9 +92,8 @@ fun CameraScreen(
                             error = error.error,
                             message = error.message,
                             onRetry = {
-                                // Create a new preview view for retry
-                                val previewView = PreviewView(context)
-                                viewModel.startCamera(previewView, lifecycleOwner)
+                                // Reset state to Initial to trigger camera preview recreation
+                                viewModel.resetState()
                             }
                         )
                     }

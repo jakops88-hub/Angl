@@ -63,6 +63,14 @@ class CameraViewModel @Inject constructor(
         _cameraState.value = CameraState.Initial
     }
 
+    /**
+     * Resets the camera state to Initial.
+     * This allows retry by triggering recomposition with initial state.
+     */
+    fun resetState() {
+        _cameraState.value = CameraState.Initial
+    }
+
     override fun onCleared() {
         super.onCleared()
         cameraRepository.stopCamera()

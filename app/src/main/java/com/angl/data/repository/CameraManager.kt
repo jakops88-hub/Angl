@@ -7,6 +7,8 @@ import android.util.Log
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -18,6 +20,9 @@ import com.angl.domain.repository.CameraRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -48,6 +53,7 @@ class CameraManager @Inject constructor(
 
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
+    private var imageCapture: ImageCapture? = null
     
     /**
      * Executor for camera operations to ensure they run on a background thread.
@@ -138,14 +144,25 @@ class CameraManager @Inject constructor(
             // The analyzer runs on the camera executor thread for optimal performance
             imageAnalysis.setAnalyzer(cameraExecutor, poseAnalyzer)
 
+            // Configure image capture use case for taking photos
+            // CAPTURE_MODE_MAXIMIZE_QUALITY ensures high-quality photos
+            val imageCaptureUseCase = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .setJpegQuality(95) // High quality for professional photos
+                .build()
+            
+            imageCapture = imageCaptureUseCase
+
             try {
                 // Bind use cases to camera lifecycle
                 // This ensures camera resources are properly managed according to lifecycle
+                // NOW INCLUDES ImageCapture for photo taking!
                 camera = provider.bindToLifecycle(
                     lifecycleOwner,
                     cameraSelector,
                     preview,
-                    imageAnalysis
+                    imageAnalysis,
+                    imageCaptureUseCase  // CRITICAL: Enables photo capture
                 )
 
                 Log.d(TAG, "Camera started successfully")
@@ -174,9 +191,80 @@ class CameraManager @Inject constructor(
         try {
             cameraProvider?.unbindAll()
             camera = null
+            imageCapture = null
             Log.d(TAG, "Camera stopped successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Error stopping camera", e)
+        }
+    }
+
+    /**
+     * Takes a photo with the current camera configuration.
+     * 
+     * Captures a high-quality JPEG image and saves it to the app-specific Pictures directory.
+     * The file is saved with a timestamp for unique naming.
+     * 
+     * @param onPhotoCaptured Callback with the file path of the captured photo
+     * @param onError Callback with error message if capture fails
+     */
+    fun takePhoto(
+        onPhotoCaptured: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val capture = imageCapture ?: run {
+            Log.e(TAG, "ImageCapture not initialized")
+            onError("Camera not ready for photo capture")
+            return
+        }
+
+        // Create output file in app-specific Pictures directory
+        val photoFile = createPhotoFile()
+        if (photoFile == null) {
+            onError("Failed to create photo file")
+            return
+        }
+
+        // Configure output options
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+
+        // Capture photo
+        capture.takePicture(
+            outputOptions,
+            cameraExecutor,
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    val savedUri = outputFileResults.savedUri ?: photoFile.toURI()
+                    Log.d(TAG, "Photo captured successfully: $savedUri")
+                    onPhotoCaptured(photoFile.absolutePath)
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    Log.e(TAG, "Photo capture failed", exception)
+                    onError("Failed to capture photo: ${exception.message}")
+                }
+            }
+        )
+    }
+
+    /**
+     * Creates a new file for photo storage.
+     * 
+     * @return File object for the photo, or null if creation failed
+     */
+    private fun createPhotoFile(): File? {
+        return try {
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis())
+            val fileName = "ANGL_$timeStamp.jpg"
+            val storageDir = File(context.getExternalFilesDir(null), "Pictures")
+            
+            if (!storageDir.exists()) {
+                storageDir.mkdirs()
+            }
+            
+            File(storageDir, fileName)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error creating photo file", e)
+            null
         }
     }
 

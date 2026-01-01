@@ -12,33 +12,40 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+// Dark theme - Primary use case for camera apps (Luxury Aesthetic)
 private val DarkColorScheme = darkColorScheme(
-    primary = Primary,
-    secondary = Secondary,
-    tertiary = SecondaryVariant,
-    background = Color(0xFF121212),
-    surface = Color(0xFF121212),
-    error = Error,
-    onPrimary = Color(0xFFFFFFFF),
-    onSecondary = Color(0xFF000000),
-    onTertiary = Color(0xFF000000),
-    onBackground = Color(0xFFFFFFFF),
+    primary = NeonLime,
+    primaryContainer = PrimaryVariant,
+    secondary = CoolCyan,
+    secondaryContainer = SecondaryVariant,
+    tertiary = ElectricPurple,
+    background = PureBlack,
+    surface = DeepCharcoal,
+    error = ErrorRed,
+    onPrimary = PureBlack,
+    onSecondary = PureBlack,
+    onTertiary = Color(0xFFFFFFFF),
+    onBackground = NeonLime,
     onSurface = Color(0xFFFFFFFF),
-    onError = Color(0xFF000000)
+    onError = Color(0xFFFFFFFF)
 )
 
+// Light theme - Available but camera apps primarily use dark
 private val LightColorScheme = lightColorScheme(
-    primary = Primary,
-    secondary = Secondary,
-    tertiary = SecondaryVariant,
-    background = Background,
-    surface = Surface,
-    error = Error,
-    onPrimary = OnPrimary,
-    onSecondary = OnSecondary,
-    onBackground = OnBackground,
-    onSurface = OnSurface,
-    onError = OnError
+    primary = NeonLime,
+    primaryContainer = Color(0xFFE6FF80),
+    secondary = CoolCyan,
+    secondaryContainer = Color(0xFF80DEEA),
+    tertiary = ElectricPurple,
+    background = Color(0xFFFFFFFFF),
+    surface = Color(0xFFF5F5F5),
+    error = ErrorRed,
+    onPrimary = PureBlack,
+    onSecondary = PureBlack,
+    onTertiary = Color(0xFFFFFFFF),
+    onBackground = PureBlack,
+    onSurface = PureBlack,
+    onError = Color(0xFFFFFFFF)
 )
 
 @Composable

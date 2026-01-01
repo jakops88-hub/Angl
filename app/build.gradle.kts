@@ -71,6 +71,9 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+    
+    // Google Fonts for luxury typography (Cinzel & Montserrat)
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.5.4")
 
     // CameraX
     val cameraxVersion = "1.3.1"

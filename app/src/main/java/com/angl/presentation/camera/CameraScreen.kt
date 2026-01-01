@@ -5,6 +5,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,6 +44,9 @@ fun CameraScreen(
     val cameraState by viewModel.cameraState.collectAsState()
     val detectedPose by viewModel.detectedPose.collectAsState()
     val feedbackState by viewModel.feedbackState.collectAsState()
+    val photoUri by viewModel.photoUri.collectAsState()
+    
+    val snackbarHostState = remember { SnackbarHostState() }
     
     var hasCameraPermission by remember { mutableStateOf(false) }
     
@@ -57,10 +62,26 @@ fun CameraScreen(
         permissionLauncher.launch(Manifest.permission.CAMERA)
     }
     
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    // Show snackbar when photo is captured
+    LaunchedEffect(photoUri) {
+        photoUri?.let { uri ->
+            snackbarHostState.showSnackbar(
+                message = "Photo saved: $uri",
+                duration = SnackbarDuration.Short
+            )
+            viewModel.clearPhotoUri()
+        }
+    }
+    
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
         when {
             !hasCameraPermission -> {
                 PermissionRequiredContent(
@@ -94,6 +115,22 @@ fun CameraScreen(
                         AnglOverlay(
                             feedbackState = feedbackState
                         )
+                        
+                        // Floating capture button
+                        FloatingActionButton(
+                            onClick = { viewModel.takePhoto() },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 32.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CameraAlt,
+                                contentDescription = "Take Photo",
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
                         
                         // Optional: Keep pose skeleton overlay for debugging
                         // PoseOverlay(

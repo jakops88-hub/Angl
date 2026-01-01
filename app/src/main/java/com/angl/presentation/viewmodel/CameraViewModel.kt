@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.angl.data.analyzer.PoseAnalyzer
+import com.angl.data.repository.CameraManager
 import com.angl.domain.engine.CompositionEngine
 import com.angl.domain.engine.FeedbackStateExtended
 import com.angl.domain.engine.GuidanceType
@@ -33,6 +34,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CameraViewModel @Inject constructor(
     private val cameraRepository: CameraRepository,
+    private val cameraManager: CameraManager,  // Direct access for photo capture
     private val poseAnalyzer: PoseAnalyzer,
     private val compositionEngine: CompositionEngine,
     private val vibrationHelper: VibrationHelper,
@@ -47,6 +49,12 @@ class CameraViewModel @Inject constructor(
 
     private val _cameraState = MutableStateFlow<CameraState>(CameraState.Initial)
     val cameraState: StateFlow<CameraState> = _cameraState.asStateFlow()
+
+    /**
+     * Photo URI state for notifying UI of captured photos.
+     */
+    private val _photoUri = MutableStateFlow<String?>(null)
+    val photoUri: StateFlow<String?> = _photoUri.asStateFlow()
 
     /**
      * Expose pose detection results from PoseAnalyzer.
@@ -155,6 +163,31 @@ class CameraViewModel @Inject constructor(
      */
     fun resetState() {
         _cameraState.value = CameraState.Initial
+    }
+
+    /**
+     * Takes a photo using the camera.
+     * 
+     * This function triggers photo capture and updates the photoUri state
+     * when successful. The UI can observe this state to show notifications.
+     */
+    fun takePhoto() {
+        cameraManager.takePhoto(
+            onPhotoCaptured = { filePath ->
+                _photoUri.value = filePath
+            },
+            onError = { errorMessage ->
+                // Could emit error state if needed
+                _photoUri.value = null
+            }
+        )
+    }
+
+    /**
+     * Clears the photo URI after it has been handled by the UI.
+     */
+    fun clearPhotoUri() {
+        _photoUri.value = null
     }
 
     override fun onCleared() {

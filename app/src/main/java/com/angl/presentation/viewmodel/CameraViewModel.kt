@@ -11,6 +11,8 @@ import com.angl.domain.engine.GuidanceType
 import com.angl.domain.model.CameraError
 import com.angl.domain.model.CameraResult
 import com.angl.domain.repository.CameraRepository
+import com.angl.util.feedback.SoundHelper
+import com.angl.util.feedback.VibrationHelper
 import com.google.mlkit.vision.pose.Pose
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -26,12 +28,15 @@ import javax.inject.Inject
  * State is exposed via StateFlow for reactive UI updates in Compose.
  * Pose detection results are also exposed via StateFlow from PoseAnalyzer.
  * Composition feedback is provided by CompositionEngine analysis.
+ * Haptic and audio feedback enhance the user experience.
  */
 @HiltViewModel
 class CameraViewModel @Inject constructor(
     private val cameraRepository: CameraRepository,
     private val poseAnalyzer: PoseAnalyzer,
-    private val compositionEngine: CompositionEngine
+    private val compositionEngine: CompositionEngine,
+    private val vibrationHelper: VibrationHelper,
+    private val soundHelper: SoundHelper
 ) : ViewModel() {
 
     companion object {
@@ -85,6 +90,32 @@ class CameraViewModel @Inject constructor(
             )
         )
 
+    init {
+        // Observe feedback state transitions and trigger sensory feedback
+        viewModelScope.launch {
+            var previousState: FeedbackStateExtended? = null
+            
+            feedbackState.collect { currentState ->
+                // Trigger haptic/audio feedback on state transitions
+                when {
+                    // Perfect state reached - trigger success feedback
+                    previousState !is FeedbackStateExtended.Perfect && 
+                    currentState is FeedbackStateExtended.Perfect -> {
+                        vibrationHelper.vibrateConfirm()
+                        soundHelper.playSuccessSound()
+                    }
+                    // Critical state - trigger warning haptic
+                    previousState !is FeedbackStateExtended.Critical &&
+                    currentState is FeedbackStateExtended.Critical -> {
+                        vibrationHelper.vibrateCritical()
+                    }
+                }
+                
+                previousState = currentState
+            }
+        }
+    }
+
     /**
      * Starts the camera with the given preview view and lifecycle owner.
      * Updates the camera state based on the result.
@@ -129,6 +160,7 @@ class CameraViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         cameraRepository.stopCamera()
+        soundHelper.release()
     }
 }
 

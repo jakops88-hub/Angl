@@ -2,8 +2,6 @@ package com.angl.util
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  * CoordinateMapper handles the critical task of translating coordinates

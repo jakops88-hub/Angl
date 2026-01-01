@@ -11,6 +11,7 @@ import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,6 +34,9 @@ class PoseAnalyzer @Inject constructor() : ImageAnalysis.Analyzer {
     private val _poseFlow = MutableStateFlow<Pose?>(null)
     val poseFlow: StateFlow<Pose?> = _poseFlow.asStateFlow()
 
+    // Use AtomicBoolean for thread-safe processing flag
+    private val isProcessingFlag = AtomicBoolean(false)
+    
     private val _isProcessing = MutableStateFlow(false)
     val isProcessing: StateFlow<Boolean> = _isProcessing.asStateFlow()
 
@@ -73,8 +77,8 @@ class PoseAnalyzer @Inject constructor() : ImageAnalysis.Analyzer {
      * @param imageProxy The camera frame to analyze
      */
     override fun analyze(imageProxy: ImageProxy) {
-        // Skip if already processing to maintain FPS
-        if (_isProcessing.value) {
+        // Atomic check-and-set to prevent race conditions
+        if (!isProcessingFlag.compareAndSet(false, true)) {
             imageProxy.close()
             return
         }
@@ -121,12 +125,14 @@ class PoseAnalyzer @Inject constructor() : ImageAnalysis.Analyzer {
                     // Without this, frames will be dropped and FPS will suffer
                     imageProxy.close()
                     _isProcessing.value = false
+                    isProcessingFlag.set(false)
                 }
         } catch (e: Exception) {
             Log.e(TAG, "Error analyzing image", e)
             // Always close ImageProxy even on error
             imageProxy.close()
             _isProcessing.value = false
+            isProcessingFlag.set(false)
         }
     }
 

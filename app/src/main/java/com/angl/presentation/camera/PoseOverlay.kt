@@ -35,14 +35,15 @@ fun PoseOverlay(
     modifier: Modifier = Modifier
 ) {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
+    val density = androidx.compose.ui.platform.LocalDensity.current
     
-    // Convert dp to pixels for coordinate mapping
-    val targetSize = IntSize(
-        screenWidth.value.toInt(),
-        screenHeight.value.toInt()
-    )
+    // Convert dp to pixels properly using density
+    val targetSize = with(density) {
+        IntSize(
+            configuration.screenWidthDp.dp.toPx().toInt(),
+            configuration.screenHeightDp.dp.toPx().toInt()
+        )
+    }
 
     Canvas(modifier = modifier.fillMaxSize()) {
         pose?.let { detectedPose ->

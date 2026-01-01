@@ -4,9 +4,11 @@ import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.angl.data.analyzer.PoseAnalyzer
 import com.angl.domain.model.CameraError
 import com.angl.domain.model.CameraResult
 import com.angl.domain.repository.CameraRepository
+import com.google.mlkit.vision.pose.Pose
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,14 +23,28 @@ import javax.inject.Inject
  * It provides a clean separation between UI and business logic.
  * 
  * State is exposed via StateFlow for reactive UI updates in Compose.
+ * Pose detection results are also exposed via StateFlow from PoseAnalyzer.
  */
 @HiltViewModel
 class CameraViewModel @Inject constructor(
-    private val cameraRepository: CameraRepository
+    private val cameraRepository: CameraRepository,
+    private val poseAnalyzer: PoseAnalyzer
 ) : ViewModel() {
 
     private val _cameraState = MutableStateFlow<CameraState>(CameraState.Initial)
     val cameraState: StateFlow<CameraState> = _cameraState.asStateFlow()
+
+    /**
+     * Expose pose detection results from PoseAnalyzer.
+     * UI can observe this to render pose overlays.
+     */
+    val detectedPose: StateFlow<Pose?> = poseAnalyzer.poseFlow
+
+    /**
+     * Expose processing state from PoseAnalyzer.
+     * UI can use this to show processing indicators.
+     */
+    val isAnalyzing: StateFlow<Boolean> = poseAnalyzer.isProcessing
 
     /**
      * Starts the camera with the given preview view and lifecycle owner.

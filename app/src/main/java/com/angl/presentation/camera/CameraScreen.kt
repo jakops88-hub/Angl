@@ -28,6 +28,7 @@ import com.angl.presentation.viewmodel.CameraViewModel
  * 2. Displays the camera preview
  * 3. Shows appropriate UI based on camera state
  * 4. Manages camera lifecycle through ViewModel
+ * 5. Displays pose detection overlay with coordinate mapping
  * 
  * The implementation is optimized for Jetpack Compose and follows Material3 design.
  */
@@ -39,6 +40,7 @@ fun CameraScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraState by viewModel.cameraState.collectAsState()
+    val detectedPose by viewModel.detectedPose.collectAsState()
     
     var hasCameraPermission by remember { mutableStateOf(false) }
     
@@ -82,8 +84,14 @@ fun CameraScreen(
                         }
                     }
                     is CameraState.Success -> {
+                        // Camera preview
                         CameraPreviewContent(
                             onPreviewViewCreated = { /* Already started */ }
+                        )
+                        // Pose overlay on top of camera preview
+                        PoseOverlay(
+                            pose = detectedPose,
+                            isMirrored = false // Set to true if using front camera
                         )
                     }
                     is CameraState.Error -> {

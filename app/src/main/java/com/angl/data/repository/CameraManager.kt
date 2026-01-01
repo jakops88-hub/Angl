@@ -42,7 +42,8 @@ import kotlin.coroutines.suspendCoroutine
  */
 @Singleton
 class CameraManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val poseAnalyzer: com.angl.data.analyzer.PoseAnalyzer
 ) : CameraRepository {
 
     private var camera: Camera? = null
@@ -133,11 +134,9 @@ class CameraManager @Inject constructor(
                 .setTargetResolution(android.util.Size(640, 480))
                 .build()
 
-            // Note: Image analyzer will be set later when ML Kit integration is added
-            // imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-            //     // ML Kit analysis will be performed here
-            //     imageProxy.close()
-            // }
+            // Attach PoseAnalyzer to process frames for pose detection
+            // The analyzer runs on the camera executor thread for optimal performance
+            imageAnalysis.setAnalyzer(cameraExecutor, poseAnalyzer)
 
             try {
                 // Bind use cases to camera lifecycle
@@ -227,6 +226,7 @@ class CameraManager @Inject constructor(
      */
     fun cleanup() {
         stopCamera()
+        poseAnalyzer.close()
         cameraExecutor.shutdown()
         Log.d(TAG, "Camera resources cleaned up")
     }

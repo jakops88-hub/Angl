@@ -36,12 +36,14 @@ fun PoseOverlay(
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     
-    // Convert dp to pixels properly using density
-    val targetSize = with(density) {
-        IntSize(
-            configuration.screenWidthDp.dp.toPx().toInt(),
-            configuration.screenHeightDp.dp.toPx().toInt()
-        )
+    // Memoize screen size calculation to avoid recomputation on every recomposition
+    val targetSize = androidx.compose.runtime.remember(configuration.screenWidthDp, configuration.screenHeightDp, density) {
+        with(density) {
+            IntSize(
+                configuration.screenWidthDp.dp.toPx().toInt(),
+                configuration.screenHeightDp.dp.toPx().toInt()
+            )
+        }
     }
 
     Canvas(modifier = modifier.fillMaxSize()) {

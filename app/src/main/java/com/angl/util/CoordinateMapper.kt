@@ -103,17 +103,17 @@ object CoordinateMapper {
 
     /**
      * Maps a point from camera source coordinates to screen coordinates
-     * using standard Size objects instead of IntSize.
+     * using android.util.Size objects instead of IntSize.
      * 
-     * This is a convenience overload for when you're working with
-     * float-based Size objects.
+     * This is a convenience overload that accepts android.util.Size from CameraX APIs.
+     * It delegates to the primary mapPoint function after converting to IntSize.
      * 
      * @param x X coordinate in source space
      * @param y Y coordinate in source space
-     * @param sourceSize Size of the camera image
+     * @param sourceSize Size of the camera image (from CameraX API)
      * @param targetSize Size of the screen/canvas
      * @param isMirrored True if using front camera
-     * @return Offset in target space
+     * @return Offset in target space (clamped to bounds)
      */
     fun mapPoint(
         x: Float,

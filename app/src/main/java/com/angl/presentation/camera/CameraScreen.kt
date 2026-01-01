@@ -41,6 +41,7 @@ fun CameraScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraState by viewModel.cameraState.collectAsState()
     val detectedPose by viewModel.detectedPose.collectAsState()
+    val feedbackState by viewModel.feedbackState.collectAsState()
     
     var hasCameraPermission by remember { mutableStateOf(false) }
     
@@ -88,11 +89,17 @@ fun CameraScreen(
                         CameraPreviewContent(
                             onPreviewViewCreated = { /* Already started */ }
                         )
-                        // Pose overlay on top of camera preview
-                        PoseOverlay(
-                            pose = detectedPose,
-                            isMirrored = false // Set to true if using front camera
+                        
+                        // Professional AR overlay with composition guidance
+                        AnglOverlay(
+                            feedbackState = feedbackState
                         )
+                        
+                        // Optional: Keep pose skeleton overlay for debugging
+                        // PoseOverlay(
+                        //     pose = detectedPose,
+                        //     isMirrored = false
+                        // )
                     }
                     is CameraState.Error -> {
                         val error = (cameraState as CameraState.Error)

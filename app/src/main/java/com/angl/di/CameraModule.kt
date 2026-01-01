@@ -1,9 +1,11 @@
 package com.angl.di
 
 import com.angl.data.repository.CameraManager
+import com.angl.domain.engine.CompositionEngine
 import com.angl.domain.repository.CameraRepository
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -28,4 +30,16 @@ abstract class CameraModule {
     abstract fun bindCameraRepository(
         cameraManager: CameraManager
     ): CameraRepository
+
+    companion object {
+        /**
+         * Provides CompositionEngine as a singleton.
+         * Pure Kotlin class with no Android dependencies.
+         */
+        @Provides
+        @Singleton
+        fun provideCompositionEngine(): CompositionEngine {
+            return CompositionEngine()
+        }
+    }
 }

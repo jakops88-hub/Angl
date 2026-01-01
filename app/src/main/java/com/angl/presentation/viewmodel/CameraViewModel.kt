@@ -5,14 +5,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.angl.data.analyzer.PoseAnalyzer
+import com.angl.domain.engine.CompositionEngine
+import com.angl.domain.engine.FeedbackStateExtended
 import com.angl.domain.model.CameraError
 import com.angl.domain.model.CameraResult
 import com.angl.domain.repository.CameraRepository
 import com.google.mlkit.vision.pose.Pose
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,11 +24,13 @@ import javax.inject.Inject
  * 
  * State is exposed via StateFlow for reactive UI updates in Compose.
  * Pose detection results are also exposed via StateFlow from PoseAnalyzer.
+ * Composition feedback is provided by CompositionEngine analysis.
  */
 @HiltViewModel
 class CameraViewModel @Inject constructor(
     private val cameraRepository: CameraRepository,
-    private val poseAnalyzer: PoseAnalyzer
+    private val poseAnalyzer: PoseAnalyzer,
+    private val compositionEngine: CompositionEngine
 ) : ViewModel() {
 
     private val _cameraState = MutableStateFlow<CameraState>(CameraState.Initial)
@@ -45,6 +47,37 @@ class CameraViewModel @Inject constructor(
      * UI can use this to show processing indicators.
      */
     val isAnalyzing: StateFlow<Boolean> = poseAnalyzer.isProcessing
+
+    /**
+     * Composition feedback state derived from detected pose.
+     * This is the "brain" output that drives the AR overlay.
+     */
+    val feedbackState: StateFlow<FeedbackStateExtended> = detectedPose
+        .map { pose ->
+            if (pose != null) {
+                // Analyze pose with composition engine
+                // Using default frame dimensions (will be updated with actual values)
+                compositionEngine.analyzePoseExtended(
+                    pose = pose,
+                    frameWidth = 640f,
+                    frameHeight = 480f
+                )
+            } else {
+                // No pose detected
+                FeedbackStateExtended.Warning(
+                    message = "POSITION YOURSELF IN FRAME",
+                    guidanceType = com.angl.domain.engine.GuidanceType.None
+                )
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = FeedbackStateExtended.Warning(
+                message = "INITIALIZING...",
+                guidanceType = com.angl.domain.engine.GuidanceType.None
+            )
+        )
 
     /**
      * Starts the camera with the given preview view and lifecycle owner.

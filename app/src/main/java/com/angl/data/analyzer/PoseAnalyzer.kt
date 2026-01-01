@@ -93,6 +93,7 @@ class PoseAnalyzer @Inject constructor() : ImageAnalysis.Analyzer {
                 Log.w(TAG, "Image is null, skipping frame")
                 imageProxy.close()
                 _isProcessing.value = false
+                isProcessingFlag.set(false)
                 return
             }
 

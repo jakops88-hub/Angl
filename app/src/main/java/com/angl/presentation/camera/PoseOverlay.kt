@@ -8,6 +8,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.angl.util.CoordinateMapper
@@ -33,7 +34,7 @@ fun PoseOverlay(
     modifier: Modifier = Modifier
 ) {
     val configuration = LocalConfiguration.current
-    val density = androidx.compose.ui.platform.LocalDensity.current
+    val density = LocalDensity.current
     
     // Convert dp to pixels properly using density
     val targetSize = with(density) {

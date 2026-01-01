@@ -26,17 +26,22 @@ object CoordinateMapper {
      * - Aspect ratio differences between source and target
      * - Scaling to fit the preview into the screen
      * - Optional mirroring for front camera
+     * - **Automatic clamping to target bounds** (coordinates outside screen are clamped)
      * 
      * The mapping assumes SCALE_TYPE_FILL_CENTER behavior where the preview
      * is scaled to fill the target while maintaining aspect ratio, with
      * cropping if necessary.
+     * 
+     * Note: Coordinates are automatically clamped to target bounds [0, width] and [0, height].
+     * If you need to detect when landmarks are outside the visible area, check the coordinates
+     * before clamping or use the raw mapped values.
      * 
      * @param x X coordinate in source (camera) space
      * @param y Y coordinate in source (camera) space
      * @param sourceSize Size of the camera image (e.g., 640x480 or 1920x1080)
      * @param targetSize Size of the screen/canvas where preview is displayed
      * @param isMirrored True if using front camera (requires horizontal flip)
-     * @return Offset representing the mapped coordinate in target space
+     * @return Offset representing the mapped coordinate in target space (clamped to bounds)
      */
     fun mapPoint(
         x: Float,

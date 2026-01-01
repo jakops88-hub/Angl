@@ -188,7 +188,7 @@ private fun ErrorContent(
                 is CameraError.InitializationFailed,
                 is CameraError.Unknown -> stringResource(R.string.camera_error)
             },
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.error
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -199,7 +199,7 @@ private fun ErrorContent(
         Spacer(modifier = Modifier.height(16.dp))
         if (error !is CameraError.PermissionDenied && error !is CameraError.CameraNotAvailable) {
             Button(onClick = onRetry) {
-                Text(text = "Retry")
+                Text(text = stringResource(R.string.retry))
             }
         }
     }

@@ -216,7 +216,7 @@ class CameraManager @Inject constructor(
                 continuation.resume(cameraProviderFuture.get())
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to get camera provider", e)
-                throw e
+                continuation.resumeWithException(e)
             }
         }, ContextCompat.getMainExecutor(context))
     }

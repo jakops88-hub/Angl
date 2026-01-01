@@ -5,4 +5,5 @@
     <string name="camera_error">Failed to initialize camera</string>
     <string name="camera_not_available">Camera is not available on this device</string>
     <string name="grant_permission">Grant Permission</string>
+    <string name="retry">Retry</string>
 </resources>

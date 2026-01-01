@@ -2,24 +2,29 @@ package com.angl.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Luxury Brand Colors - "The Angl Aesthetic"
-val NeonLime = Color(0xFFCCFF00)        // Primary: Vibrant, eye-catching, energetic
-val CoolCyan = Color(0xFF00BCD4)         // Secondary: Tech-forward, cool complement
-val ElectricPurple = Color(0xFF9C27B0)   // Tertiary: Premium accent
-val PureBlack = Color(0xFF000000)        // Background: Maximum contrast for camera UI
-val DeepCharcoal = Color(0xFF121212)     // Surface: Subtle depth
-val ErrorRed = Color(0xFFD50000)         // Error: Critical feedback
+/**
+ * Dark Luxury Design System - "The Angl Aesthetic"
+ * Carefully crafted color palette for premium camera app experience
+ */
 
-// Dark theme colors (primary use case for camera apps)
-val Primary = NeonLime
-val PrimaryVariant = Color(0xFFAADD00)   // Slightly darker lime
-val Secondary = CoolCyan
-val SecondaryVariant = Color(0xFF0097A7) // Darker cyan
-val Background = PureBlack
-val Surface = DeepCharcoal
-val Error = ErrorRed
-val OnPrimary = PureBlack
-val OnSecondary = PureBlack
-val OnBackground = NeonLime
-val OnSurface = Color(0xFFFFFFFF)
-val OnError = Color(0xFFFFFFFF)
+// Core Background & Surface Colors
+val RichBlack = Color(0xFF121212)        // Background: Deep, rich black
+val DarkSurface = Color(0xFF1E1E1E)      // Cards/Surface: Elevated dark surface
+val GlassScrim = Color(0xCC121212)       // Semi-transparent black for overlays (80% opacity)
+
+// Accent Colors - The Luxury Palette
+val NeonLime = Color(0xFFAEEA00)         // Primary Accent: Used for 'Perfect' state and primary actions
+val ElectricGold = Color(0xFFFFD700)     // Secondary Accent: Premium gold highlights
+val ErrorRed = Color(0xFFFF5252)         // Warning/Critical: High-visibility error state
+
+// Complementary Colors
+val CoolCyan = Color(0xFF00BCD4)         // Tech-forward complement
+val ElectricPurple = Color(0xFF9C27B0)   // Tertiary accent
+
+// Text Colors
+val OffWhite = Color(0xFFE0E0E0)         // Default text color: Soft white for reduced eye strain
+val PureWhite = Color(0xFFFFFFFF)        // High emphasis text
+
+// Legacy compatibility (will be phased out)
+val PureBlack = Color(0xFF000000)
+val DeepCharcoal = RichBlack

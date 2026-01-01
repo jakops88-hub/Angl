@@ -12,58 +12,69 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-// Dark theme - Primary use case for camera apps (Luxury Aesthetic)
+/**
+ * Dark Luxury Theme - "The Angl Aesthetic"
+ * Forces dark mode for premium camera app experience
+ * Transparent status bar with light icons
+ */
+
+// Dark theme - Primary use case for camera apps (Dark Luxury Aesthetic)
 private val DarkColorScheme = darkColorScheme(
     primary = NeonLime,
-    primaryContainer = PrimaryVariant,
-    secondary = CoolCyan,
-    secondaryContainer = SecondaryVariant,
+    primaryContainer = Color(0xFF8BC34A),  // Slightly muted lime
+    secondary = ElectricGold,
+    secondaryContainer = Color(0xFFFFE082),  // Lighter gold
     tertiary = ElectricPurple,
-    background = PureBlack,
-    surface = DeepCharcoal,
+    tertiaryContainer = Color(0xFFBA68C8),  // Lighter purple
+    background = RichBlack,
+    surface = DarkSurface,
+    surfaceVariant = Color(0xFF2A2A2A),
     error = ErrorRed,
-    onPrimary = PureBlack,
-    onSecondary = PureBlack,
-    onTertiary = Color(0xFFFFFFFF),
-    onBackground = NeonLime,
-    onSurface = Color(0xFFFFFFFF),
-    onError = Color(0xFFFFFFFF)
+    onPrimary = RichBlack,
+    onSecondary = RichBlack,
+    onTertiary = PureWhite,
+    onBackground = OffWhite,
+    onSurface = OffWhite,
+    onSurfaceVariant = Color(0xFFB0B0B0),
+    onError = PureWhite,
+    outline = Color(0xFF3D3D3D),
+    outlineVariant = Color(0xFF2A2A2A)
 )
 
 // Light theme - Available but camera apps primarily use dark
 private val LightColorScheme = lightColorScheme(
     primary = NeonLime,
     primaryContainer = Color(0xFFE6FF80),
-    secondary = CoolCyan,
-    secondaryContainer = Color(0xFF80DEEA),
+    secondary = ElectricGold,
+    secondaryContainer = Color(0xFFFFE082),
     tertiary = ElectricPurple,
-    background = Color(0xFFFFFFFFF),
+    background = Color(0xFFFFFFFF),
     surface = Color(0xFFF5F5F5),
     error = ErrorRed,
-    onPrimary = PureBlack,
-    onSecondary = PureBlack,
-    onTertiary = Color(0xFFFFFFFF),
-    onBackground = PureBlack,
-    onSurface = PureBlack,
-    onError = Color(0xFFFFFFFF)
+    onPrimary = RichBlack,
+    onSecondary = RichBlack,
+    onTertiary = PureWhite,
+    onBackground = RichBlack,
+    onSurface = RichBlack,
+    onError = PureWhite
 )
 
 @Composable
 fun AnglTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true,  // FORCE DARK MODE - Ignore system settings
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    // Always use dark theme for camera app aesthetic
+    val colorScheme = DarkColorScheme
     
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            // Transparent status bar for immersive experience
+            window.statusBarColor = Color.Transparent.toArgb()
+            // Light icons on transparent/dark status bar
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
 

@@ -251,13 +251,14 @@ class CameraManager @Inject constructor(
                     
                     // For Android 10+, mark the file as ready (not pending)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && savedUri != null) {
-                        contentValues.clear()
-                        contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
-                        context.contentResolver.update(savedUri, contentValues, null, null)
+                        val updateValues = ContentValues().apply {
+                            put(MediaStore.MediaColumns.IS_PENDING, 0)
+                        }
+                        context.contentResolver.update(savedUri, updateValues, null, null)
                     }
                     
                     Log.d(TAG, "Photo saved to Gallery: $savedUri")
-                    onPhotoCaptured(savedUri?.toString() ?: "Photo saved successfully")
+                    onPhotoCaptured(savedUri?.toString() ?: "")
                 }
 
                 override fun onError(exception: ImageCaptureException) {

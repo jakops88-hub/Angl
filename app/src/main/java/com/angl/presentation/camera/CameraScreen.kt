@@ -5,8 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -116,21 +114,13 @@ fun CameraScreen(
                             feedbackState = feedbackState
                         )
                         
-                        // Floating capture button
-                        FloatingActionButton(
+                        // Premium shutter button at bottom center
+                        ShutterButton(
                             onClick = { viewModel.takePhoto() },
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .padding(bottom = 32.dp),
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.CameraAlt,
-                                contentDescription = "Take Photo",
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
+                                .padding(bottom = 48.dp)
+                        )
                         
                         // Optional: Keep pose skeleton overlay for debugging
                         // PoseOverlay(

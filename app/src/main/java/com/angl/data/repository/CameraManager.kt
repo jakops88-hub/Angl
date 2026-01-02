@@ -1,8 +1,11 @@
 package com.angl.data.repository
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -20,7 +23,6 @@ import com.angl.domain.repository.CameraRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -201,10 +203,10 @@ class CameraManager @Inject constructor(
     /**
      * Takes a photo with the current camera configuration.
      * 
-     * Captures a high-quality JPEG image and saves it to the app-specific Pictures directory.
-     * The file is saved with a timestamp for unique naming.
+     * Captures a high-quality JPEG image and saves it to the device's MediaStore (Gallery).
+     * The photo will appear in the device's Gallery app with proper metadata.
      * 
-     * @param onPhotoCaptured Callback with the file path of the captured photo
+     * @param onPhotoCaptured Callback with the URI string of the captured photo
      * @param onError Callback with error message if capture fails
      */
     fun takePhoto(
@@ -217,15 +219,27 @@ class CameraManager @Inject constructor(
             return
         }
 
-        // Create output file in app-specific Pictures directory
-        val photoFile = createPhotoFile()
-        if (photoFile == null) {
-            onError("Failed to create photo file")
-            return
+        // Create ContentValues with metadata for MediaStore
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis())
+        val fileName = "ANGL_$timeStamp"
+        
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            
+            // For Android 10 (Q) and above, use MediaStore with relative path
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/Angl")
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
         }
 
-        // Configure output options
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        // Configure output options to save to MediaStore
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(
+            context.contentResolver,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        ).build()
 
         // Capture photo
         capture.takePicture(
@@ -233,9 +247,17 @@ class CameraManager @Inject constructor(
             cameraExecutor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val savedUri = outputFileResults.savedUri ?: photoFile.toURI()
-                    Log.d(TAG, "Photo captured successfully: $savedUri")
-                    onPhotoCaptured(photoFile.absolutePath)
+                    val savedUri = outputFileResults.savedUri
+                    
+                    // For Android 10+, mark the file as ready (not pending)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && savedUri != null) {
+                        contentValues.clear()
+                        contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                        context.contentResolver.update(savedUri, contentValues, null, null)
+                    }
+                    
+                    Log.d(TAG, "Photo saved to Gallery: $savedUri")
+                    onPhotoCaptured(savedUri?.toString() ?: "Photo saved successfully")
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -244,28 +266,6 @@ class CameraManager @Inject constructor(
                 }
             }
         )
-    }
-
-    /**
-     * Creates a new file for photo storage.
-     * 
-     * @return File object for the photo, or null if creation failed
-     */
-    private fun createPhotoFile(): File? {
-        return try {
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis())
-            val fileName = "ANGL_$timeStamp.jpg"
-            val storageDir = File(context.getExternalFilesDir(null), "Pictures")
-            
-            if (!storageDir.exists()) {
-                storageDir.mkdirs()
-            }
-            
-            File(storageDir, fileName)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error creating photo file", e)
-            null
-        }
     }
 
     /**

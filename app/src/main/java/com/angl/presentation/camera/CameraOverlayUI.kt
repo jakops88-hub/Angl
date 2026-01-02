@@ -213,7 +213,7 @@ fun GuidanceHUD(
                 label = "sub_message_animation"
             ) { message ->
                 Text(
-                    text = message.uppercase(),
+                    text = message,
                     fontFamily = MontserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 11.sp,

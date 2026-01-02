@@ -1,5 +1,7 @@
 package com.angl.presentation.camera
 
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
@@ -24,6 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -490,7 +493,8 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawDirectionalArro
 }
 
 /**
- * Draws a single chevron (>) using Path.
+ * Draws a single chevron (>) using simple lines.
+ * The chevron is drawn pointing right by default, rotation is handled by the caller.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawChevronPath(
     center: Offset,
@@ -498,32 +502,28 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawChevronPath(
     rotation: Float,
     color: Color
 ) {
-    val path = Path().apply {
-        val halfSize = size / 2
-        // Start at top-left
-        moveTo(center.x - halfSize * 0.6f, center.y - halfSize)
-        // Line to tip (right point)
-        lineTo(center.x + halfSize * 0.6f, center.y)
-        // Line to bottom-left
-        lineTo(center.x - halfSize * 0.6f, center.y + halfSize)
+    val halfSize = size / 2
+    
+    // Rotate canvas around center point
+    rotate(rotation, pivot = center) {
+        // Draw top line of chevron (from left to tip)
+        drawLine(
+            color = color,
+            start = Offset(center.x - halfSize * 0.6f, center.y - halfSize),
+            end = Offset(center.x + halfSize * 0.6f, center.y),
+            strokeWidth = 8f,
+            cap = StrokeCap.Round
+        )
+        
+        // Draw bottom line of chevron (from tip to left)
+        drawLine(
+            color = color,
+            start = Offset(center.x + halfSize * 0.6f, center.y),
+            end = Offset(center.x - halfSize * 0.6f, center.y + halfSize),
+            strokeWidth = 8f,
+            cap = StrokeCap.Round
+        )
     }
-    
-    // Apply rotation
-    val radians = rotation * Math.PI.toFloat() / 180f
-    val cos = kotlin.math.cos(radians)
-    val sin = kotlin.math.sin(radians)
-    
-    path.translate(Offset(-center.x, -center.y))
-    val rotationMatrix = Matrix()
-    rotationMatrix.rotateZ(rotation)
-    path.transform(rotationMatrix)
-    path.translate(Offset(center.x, center.y))
-    
-    drawPath(
-        path = path,
-        color = color,
-        style = Stroke(width = 8f, cap = StrokeCap.Round, join = StrokeJoin.Round)
-    )
 }
 
 // ============================================================================

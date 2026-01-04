@@ -54,8 +54,8 @@ class CompositionEngineTest {
     @Test
     fun testCriticalTilt() {
         // Create a mock pose with significant tilt (>5 degrees)
-        // For a 6-degree tilt with 200px horizontal distance:
-        // dy = 200 * tan(6°) ≈ 21 pixels
+        // With 200px horizontal distance and 40px vertical difference:
+        // angle = atan(40/200) ≈ 11.3 degrees
         val pose = createMockPose(
             leftShoulderX = 200f,
             leftShoulderY = 280f,  // Left shoulder higher

@@ -1,5 +1,14 @@
 # Angl
+
+![Status](https://img.shields.io/badge/Status-Production%20Ready-green)
+
 AI Photo Coach - Real-time Camera Assistant with ML Kit
+
+## Features
+
+- [x] Real-time AI Pose Detection
+- [x] Dark Luxury UI
+- [x] Privacy-first On-device processing
 
 ## Overview
 Angl is a modern Android application that uses Google ML Kit to guide users in taking better photos. The app provides real-time camera feedback with a focus on performance (60fps processing) and user experience.

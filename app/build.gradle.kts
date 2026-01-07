@@ -28,8 +28,11 @@ android {
             if (keystoreFile.exists()) {
                 storeFile = keystoreFile
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                    ?: error("SIGNING_STORE_PASSWORD environment variable not set")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                    ?: error("SIGNING_KEY_ALIAS environment variable not set")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+                    ?: error("SIGNING_KEY_PASSWORD environment variable not set")
             }
         }
     }
@@ -42,7 +45,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (file("keystore.jks").exists()) signingConfigs.getByName("release") else null
         }
     }
 

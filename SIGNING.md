@@ -34,13 +34,13 @@ The build system is designed to handle both signed and unsigned builds:
 Run this command in your terminal:
 
 ```bash
-keytool -genkey -v -keystore app/keystore.jks -alias angl-key -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkey -v -keystore app/keystore.jks -alias angl-key -keyalg RSA -keysize 3072 -validity 10000
 ```
 
 **Parameters explained:**
 - `-keystore app/keystore.jks`: Output file location
 - `-alias angl-key`: Identifier for your signing key (remember this!)
-- `-keyalg RSA -keysize 2048`: Cryptographic algorithm and key size
+- `-keyalg RSA -keysize 3072`: Cryptographic algorithm and key size (3072-bit for enhanced security)
 - `-validity 10000`: Key valid for ~27 years
 
 ### Step 2: Provide Required Information
@@ -300,7 +300,7 @@ This prevents accidental commits. If you accidentally committed a keystore:
 
 ```bash
 # Generate keystore
-keytool -genkey -v -keystore app/keystore.jks -alias angl-key -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkey -v -keystore app/keystore.jks -alias angl-key -keyalg RSA -keysize 3072 -validity 10000
 
 # List keystore contents
 keytool -list -keystore app/keystore.jks
@@ -327,4 +327,4 @@ SIGNING_KEY_PASSWORD=<key_password>
 
 ---
 
-**Need Help?** Check the [GitHub Actions workflow logs](../../actions) for detailed error messages.
+**Need Help?** Check the GitHub Actions workflow logs for detailed error messages (navigate to the Actions tab in your repository).

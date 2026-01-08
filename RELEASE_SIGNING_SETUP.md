@@ -10,7 +10,7 @@ This document provides a quick overview of the release signing setup. For detail
 
 1. Generate keystore: 
    ```bash
-   keytool -genkey -v -keystore app/keystore.jks -alias angl-key -keyalg RSA -keysize 2048 -validity 10000
+   keytool -genkey -v -keystore app/keystore.jks -alias angl-key -keyalg RSA -keysize 3072 -validity 10000
    ```
 
 2. Set environment variables:

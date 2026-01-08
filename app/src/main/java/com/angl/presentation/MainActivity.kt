@@ -64,8 +64,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         } catch (e: Exception) {
-            // Catch any exceptions during initialization and display them
+            // Catch any exceptions during initialization and display them,
+            // then finish the activity stack to avoid continuing in an inconsistent state.
             showFatalErrorDialog(e)
+            finishAffinity()
         }
     }
     

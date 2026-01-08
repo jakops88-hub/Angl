@@ -178,8 +178,7 @@ fun GuidanceHUD(
                         initialContentExit = slideOutVertically(
                             targetOffsetY = { -it / 2 },
                             animationSpec = tween(300)
-                        ) + fadeOut(),
-                        sizeTransform = SizeTransform(clip = false)
+                        ) + fadeOut()
                     )
                 },
                 label = "main_message_animation"

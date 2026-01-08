@@ -108,7 +108,11 @@ class MainActivity : ComponentActivity() {
             AlertDialog.Builder(this)
                 .setTitle("App Crashed - Debug Info")
                 .setMessage(errorMessage)
-                .setCancelable(false)
+                .setCancelable(true)
+                .setOnCancelListener {
+                    // Ensure the app can always be exited even if buttons misbehave
+                    finishAffinity()
+                }
                 .setPositiveButton("Close App") { _, _ ->
                     finishAffinity()
                 }

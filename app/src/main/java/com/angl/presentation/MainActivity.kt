@@ -1,6 +1,9 @@
 package com.angl.presentation
 
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
@@ -75,13 +78,12 @@ class MainActivity : ComponentActivity() {
         
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
-                // Show error dialog on the UI thread
-                runOnUiThread {
-                    showFatalErrorDialog(throwable)
+                // Show error dialog on the UI thread if activity is valid
+                if (!isFinishing && !isDestroyed) {
+                    runOnUiThread {
+                        showFatalErrorDialog(throwable)
+                    }
                 }
-                
-                // Give the dialog time to appear before the app dies
-                Thread.sleep(500)
             } catch (e: Exception) {
                 // If we can't show the dialog, at least try the default handler
                 e.printStackTrace()
@@ -135,8 +137,8 @@ class MainActivity : ComponentActivity() {
      */
     private fun copyToClipboard(text: String) {
         try {
-            val clipboard = getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-            val clip = android.content.ClipData.newPlainText("Error Log", text)
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Error Log", text)
             clipboard.setPrimaryClip(clip)
         } catch (e: Exception) {
             e.printStackTrace()

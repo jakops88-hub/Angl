@@ -33,6 +33,12 @@ android {
                     ?: error("SIGNING_KEY_ALIAS environment variable not set")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
                     ?: error("SIGNING_KEY_PASSWORD environment variable not set")
+            } else {
+                // Keystore not found - release build will be unsigned
+                // See SIGNING.md for instructions on creating a production keystore
+                logger.warn("⚠️  Keystore not found at ${keystoreFile.absolutePath}")
+                logger.warn("⚠️  Release build will be UNSIGNED - not suitable for Play Store upload")
+                logger.warn("⚠️  See SIGNING.md for setup instructions")
             }
         }
     }

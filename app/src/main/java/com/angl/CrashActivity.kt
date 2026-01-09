@@ -22,10 +22,17 @@ class CrashActivity : AppCompatActivity() {
         // Get the error text from the intent
         val errorText = intent.getStringExtra(EXTRA_ERROR_TEXT) ?: "Unknown error occurred"
         
+        // Convert DP to pixels for padding
+        val paddingPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 
+            16f, 
+            resources.displayMetrics
+        ).toInt()
+        
         // Create TextView programmatically
         val textView = TextView(this).apply {
             text = errorText
-            setPadding(48, 48, 48, 48) // Increased padding for better readability
+            setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f) // Size in SP units for proper scaling
             setTextIsSelectable(true) // Allow user to select and copy text
         }

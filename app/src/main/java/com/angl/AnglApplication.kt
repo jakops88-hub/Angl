@@ -40,8 +40,9 @@ class AnglApplication : Application() {
                 }
                 startActivity(intent)
                 
-                // Let the system handle the process transition
-                // FLAG_ACTIVITY_CLEAR_TASK will clear the activity stack
+                // Kill the main process to clear the white screen
+                // CrashActivity runs in a separate process (:error_overlay) so it will survive
+                android.os.Process.killProcess(android.os.Process.myPid())
             } catch (e: Exception) {
                 // If our handler fails, at least try to log it
                 e.printStackTrace()

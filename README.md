@@ -131,8 +131,26 @@ Comprehensive error handling covers:
 # Build release APK
 ./gradlew assembleRelease
 
+# Build release AAB (for Play Store)
+./gradlew bundleRelease
+
 # Install on connected device
 ./gradlew installDebug
+```
+
+### Version Management
+The app uses automated version management:
+- **CI/CD Builds**: Version codes are automatically incremented using GitHub Actions run numbers
+- **Local Builds**: Version information is read from `version.properties`
+
+For more details, see [VERSION_MANAGEMENT.md](VERSION_MANAGEMENT.md)
+
+```bash
+# Show current version
+./gradlew showVersion
+
+# Manually increment version code (for local releases)
+./gradlew incrementVersionCode
 ```
 
 ## Code Quality Standards

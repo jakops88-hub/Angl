@@ -40,14 +40,12 @@ class AnglApplication : Application() {
                 }
                 startActivity(intent)
                 
-                // Exit the app to allow CrashActivity to display
-                android.os.Process.killProcess(android.os.Process.myPid())
+                // Let the system handle the process transition
+                // FLAG_ACTIVITY_CLEAR_TASK will clear the activity stack
             } catch (e: Exception) {
                 // If our handler fails, at least try to log it
                 e.printStackTrace()
                 throwable.printStackTrace()
-                // Exit anyway
-                android.os.Process.killProcess(android.os.Process.myPid())
             }
         }
     }

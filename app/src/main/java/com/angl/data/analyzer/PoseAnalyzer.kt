@@ -124,7 +124,7 @@ class PoseAnalyzer @Inject constructor() : ImageAnalysis.Analyzer {
                     // Without this, frames will be dropped and FPS will suffer
                     resetProcessingState(imageProxy)
                 }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Log.e(TAG, "Error analyzing image", e)
             // Always close ImageProxy even on error
             resetProcessingState(imageProxy)

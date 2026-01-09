@@ -1,6 +1,7 @@
 package com.angl
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +26,7 @@ class CrashActivity : AppCompatActivity() {
         val textView = TextView(this).apply {
             text = errorText
             setPadding(48, 48, 48, 48) // Increased padding for better readability
-            textSize = 14f // Size in SP units (default unit for TextView.setTextSize)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f) // Size in SP units for proper scaling
             setTextIsSelectable(true) // Allow user to select and copy text
         }
         

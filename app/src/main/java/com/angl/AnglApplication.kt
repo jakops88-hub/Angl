@@ -24,8 +24,6 @@ class AnglApplication : Application() {
      * This allows developers to see errors on physical devices without logcat access.
      */
     private fun setupGlobalExceptionHandler() {
-        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
-        
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
                 // Get the full stack trace as a string
@@ -42,12 +40,17 @@ class AnglApplication : Application() {
                 }
                 startActivity(intent)
                 
-                // Call the default handler to ensure proper cleanup
-                defaultHandler?.uncaughtException(thread, throwable)
+                // Exit the app to allow CrashActivity to display
+                // Don't call the default handler as it would terminate immediately
+                android.os.Process.killProcess(android.os.Process.myPid())
+                System.exit(10)
             } catch (e: Exception) {
-                // If our handler fails, fall back to the default handler
+                // If our handler fails, at least try to log it
                 e.printStackTrace()
-                defaultHandler?.uncaughtException(thread, throwable)
+                throwable.printStackTrace()
+                // Exit anyway
+                android.os.Process.killProcess(android.os.Process.myPid())
+                System.exit(10)
             }
         }
     }

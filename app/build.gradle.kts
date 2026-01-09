@@ -5,6 +5,36 @@ plugins {
     kotlin("kapt")
 }
 
+// Load version information from version.properties
+val versionPropsFile = file("../version.properties")
+val versionProps = java.util.Properties()
+
+if (versionPropsFile.exists()) {
+    versionProps.load(java.io.FileInputStream(versionPropsFile))
+}
+
+// Get version code from properties or default to 1
+val versionCodeFromProps = versionProps.getProperty("VERSION_CODE", "1").toInt()
+
+// Use GitHub Actions run number if available, otherwise use properties file value
+val buildVersionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()?.let { runNumber ->
+    // For CI builds, use a high base + run number to ensure uniqueness
+    1000 + runNumber
+} ?: versionCodeFromProps
+
+// Build version name from properties
+val versionMajor = versionProps.getProperty("VERSION_MAJOR", "1").toInt()
+val versionMinor = versionProps.getProperty("VERSION_MINOR", "0").toInt()
+val versionPatch = versionProps.getProperty("VERSION_PATCH", "0").toInt()
+val buildVersionName = "$versionMajor.$versionMinor.$versionPatch"
+
+// Log version information
+println("===========================================")
+println("Building Angl")
+println("Version Code: $buildVersionCode")
+println("Version Name: $buildVersionName")
+println("===========================================")
+
 android {
     namespace = "com.angl"
     compileSdk = 35
@@ -13,8 +43,8 @@ android {
         applicationId = "com.angl"
         minSdk = 24
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.3-debug"
+        versionCode = buildVersionCode
+        versionName = buildVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -137,4 +167,56 @@ dependencies {
 
 kapt {
     correctErrorTypes = true
+}
+
+// Task to increment version code in version.properties
+tasks.register("incrementVersionCode") {
+    group = "versioning"
+    description = "Increments the version code in version.properties"
+    
+    doLast {
+        val versionPropsFile = file("../version.properties")
+        val versionProps = java.util.Properties()
+        
+        if (versionPropsFile.exists()) {
+            versionProps.load(java.io.FileInputStream(versionPropsFile))
+            val currentVersionCode = versionProps.getProperty("VERSION_CODE", "1").toInt()
+            val newVersionCode = currentVersionCode + 1
+            versionProps.setProperty("VERSION_CODE", newVersionCode.toString())
+            
+            versionProps.store(java.io.FileOutputStream(versionPropsFile), 
+                "Version configuration for Angl app\nUpdated by incrementVersionCode task")
+            
+            println("Version code incremented: $currentVersionCode -> $newVersionCode")
+        } else {
+            println("ERROR: version.properties file not found!")
+        }
+    }
+}
+
+// Task to display current version information
+tasks.register("showVersion") {
+    group = "versioning"
+    description = "Displays current version information"
+    
+    doLast {
+        val versionPropsFile = file("../version.properties")
+        val versionProps = java.util.Properties()
+        
+        if (versionPropsFile.exists()) {
+            versionProps.load(java.io.FileInputStream(versionPropsFile))
+            val versionCode = versionProps.getProperty("VERSION_CODE", "1")
+            val versionMajor = versionProps.getProperty("VERSION_MAJOR", "1")
+            val versionMinor = versionProps.getProperty("VERSION_MINOR", "0")
+            val versionPatch = versionProps.getProperty("VERSION_PATCH", "0")
+            
+            println("===========================================")
+            println("Current Version Information:")
+            println("  Version Code: $versionCode")
+            println("  Version Name: $versionMajor.$versionMinor.$versionPatch")
+            println("===========================================")
+        } else {
+            println("ERROR: version.properties file not found!")
+        }
+    }
 }

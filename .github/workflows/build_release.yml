@@ -51,6 +51,19 @@ jobs:
             echo "⚠️  See SIGNING.md for instructions on setting up signing"
           fi
 
+      - name: Display Version Information
+        run: |
+          echo "==========================================="
+          echo "Build Information:"
+          echo "  GitHub Run Number: ${{ github.run_number }}"
+          echo "  Calculated Version Code: $((1000 + ${{ github.run_number }}))"
+          echo "==========================================="
+          if [ -f version.properties ]; then
+            echo "Version Properties File:"
+            cat version.properties
+          fi
+          echo "==========================================="
+
       - name: Build Release AAB
         run: ./gradlew bundleRelease
         env:
@@ -61,7 +74,30 @@ jobs:
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
+          name: app-release-run-${{ github.run_number }}
           path: app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 30
+
+      - name: Create Build Summary
+        run: |
+          echo "## 📦 Release Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Version Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Code:** $((1000 + ${{ github.run_number }}))" >> $GITHUB_STEP_SUMMARY
+          echo "- **GitHub Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f version.properties ]; then
+            MAJOR=$(grep VERSION_MAJOR version.properties | cut -d'=' -f2)
+            MINOR=$(grep VERSION_MINOR version.properties | cut -d'=' -f2)
+            PATCH=$(grep VERSION_PATCH version.properties | cut -d'=' -f2)
+            echo "- **Version Name:** $MAJOR.$MINOR.$PATCH" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📥 Download" >> $GITHUB_STEP_SUMMARY
+          echo "The release AAB is available in the workflow artifacts." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ℹ️ Notes" >> $GITHUB_STEP_SUMMARY
+          echo "- Each CI build automatically gets a unique version code" >> $GITHUB_STEP_SUMMARY
+          echo "- Version code = 1000 + GitHub run number" >> $GITHUB_STEP_SUMMARY
+          echo "- Ready for Google Play Store upload" >> $GITHUB_STEP_SUMMARY

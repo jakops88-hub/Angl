@@ -10,7 +10,7 @@ val versionPropsFile = file("../version.properties")
 val versionProps = java.util.Properties()
 
 if (versionPropsFile.exists()) {
-    versionProps.load(java.io.FileInputStream(versionPropsFile))
+    versionPropsFile.inputStream().use { versionProps.load(it) }
 }
 
 // Get version code from properties or default to 1
@@ -169,6 +169,16 @@ kapt {
     correctErrorTypes = true
 }
 
+// Helper function to load version properties
+fun loadVersionProperties(): java.util.Properties {
+    val versionPropsFile = file("../version.properties")
+    val versionProps = java.util.Properties()
+    if (versionPropsFile.exists()) {
+        versionPropsFile.inputStream().use { versionProps.load(it) }
+    }
+    return versionProps
+}
+
 // Task to increment version code in version.properties
 tasks.register("incrementVersionCode") {
     group = "versioning"
@@ -176,16 +186,16 @@ tasks.register("incrementVersionCode") {
     
     doLast {
         val versionPropsFile = file("../version.properties")
-        val versionProps = java.util.Properties()
+        val versionProps = loadVersionProperties()
         
         if (versionPropsFile.exists()) {
-            versionProps.load(java.io.FileInputStream(versionPropsFile))
             val currentVersionCode = versionProps.getProperty("VERSION_CODE", "1").toInt()
             val newVersionCode = currentVersionCode + 1
             versionProps.setProperty("VERSION_CODE", newVersionCode.toString())
             
-            versionProps.store(java.io.FileOutputStream(versionPropsFile), 
-                "Version configuration for Angl app\nUpdated by incrementVersionCode task")
+            versionPropsFile.outputStream().use {
+                versionProps.store(it, "Version configuration for Angl app - Updated by incrementVersionCode task")
+            }
             
             println("Version code incremented: $currentVersionCode -> $newVersionCode")
         } else {
@@ -201,10 +211,9 @@ tasks.register("showVersion") {
     
     doLast {
         val versionPropsFile = file("../version.properties")
-        val versionProps = java.util.Properties()
+        val versionProps = loadVersionProperties()
         
         if (versionPropsFile.exists()) {
-            versionProps.load(java.io.FileInputStream(versionPropsFile))
             val versionCode = versionProps.getProperty("VERSION_CODE", "1")
             val versionMajor = versionProps.getProperty("VERSION_MAJOR", "1")
             val versionMinor = versionProps.getProperty("VERSION_MINOR", "0")

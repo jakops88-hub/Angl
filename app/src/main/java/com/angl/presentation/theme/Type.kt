@@ -21,18 +21,21 @@ import com.angl.R
  * Montserrat: Modern sans-serif for body text and UI elements
  */
 
+// TEMPORARY DEBUG: Use default fonts to rule out resource crash
 // Cinzel font family (elegant serif for headings)
 // Uses local TTF file: res/font/cinzel_bold.ttf
-val CinzelFontFamily = FontFamily(
-    Font(R.font.cinzel_bold, FontWeight.Bold)
-)
+// val CinzelFontFamily = FontFamily(
+//     Font(R.font.cinzel_bold, FontWeight.Bold)
+// )
+val CinzelFontFamily = FontFamily.Default
 
 // Montserrat font family (modern sans-serif for body)
 // Uses local TTF files: res/font/montserrat_medium.ttf and montserrat_bold.ttf
-val MontserratFontFamily = FontFamily(
-    Font(R.font.montserrat_medium, FontWeight.Medium),
-    Font(R.font.montserrat_bold, FontWeight.Bold)
-)
+// val MontserratFontFamily = FontFamily(
+//     Font(R.font.montserrat_medium, FontWeight.Medium),
+//     Font(R.font.montserrat_bold, FontWeight.Bold)
+// )
+val MontserratFontFamily = FontFamily.Default
 
 // Luxury Typography with custom LOCAL fonts and tight letter spacing
 val Typography = Typography(

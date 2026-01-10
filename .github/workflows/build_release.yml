@@ -64,18 +64,18 @@ jobs:
           fi
           echo "==========================================="
 
-      - name: Build Release APK
-        run: ./gradlew assembleRelease
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
 
-      - name: Upload APK Artifact
+      - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-run-${{ github.run_number }}
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 30
 
@@ -95,9 +95,9 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📥 Download" >> $GITHUB_STEP_SUMMARY
-          echo "The release APK is available in the workflow artifacts." >> $GITHUB_STEP_SUMMARY
+          echo "The release AAB is available in the workflow artifacts." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### ℹ️ Notes" >> $GITHUB_STEP_SUMMARY
           echo "- Each CI build automatically gets a unique version code" >> $GITHUB_STEP_SUMMARY
           echo "- Version code = 1000 + GitHub run number" >> $GITHUB_STEP_SUMMARY
-          echo "- APK can be installed directly on devices for testing" >> $GITHUB_STEP_SUMMARY
+          echo "- AAB format is required for Google Play Store upload" >> $GITHUB_STEP_SUMMARY

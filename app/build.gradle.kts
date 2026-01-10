@@ -28,7 +28,7 @@ val buildVersionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()?.let { 
 val versionMajor = versionProps.getProperty("VERSION_MAJOR", "1").toInt()
 val versionMinor = versionProps.getProperty("VERSION_MINOR", "0").toInt()
 val versionPatch = versionProps.getProperty("VERSION_PATCH", "0").toInt()
-val buildVersionName = "$versionMajor.$versionMinor-debug"
+val buildVersionName = "1.8-production"
 
 // Log version information
 println("===========================================")

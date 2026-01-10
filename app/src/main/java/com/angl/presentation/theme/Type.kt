@@ -43,7 +43,7 @@ val MontserratFontFamily = FontFamily(
     Font(googleFont = MontserratFont, fontProvider = provider, weight = FontWeight.Normal)
 )
 
-// Luxury Typography with custom LOCAL fonts and tight letter spacing
+// Luxury Typography with Google Downloadable Fonts and tight letter spacing
 val Typography = Typography(
     // Display styles - Cinzel for maximum impact
     displayLarge = TextStyle(

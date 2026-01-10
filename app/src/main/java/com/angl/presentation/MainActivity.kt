@@ -1,9 +1,6 @@
 package com.angl.presentation
 
 import android.os.Bundle
-import android.view.View
-import android.view.WindowInsets
-import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.angl.presentation.camera.CameraScreen
 import com.angl.presentation.permission.PermissionWrapper
 import com.angl.presentation.theme.AnglTheme
@@ -61,24 +60,16 @@ class MainActivity : ComponentActivity() {
      * Bars reappear temporarily on swipe and hide automatically.
      */
     private fun setupImmersiveMode() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            // Modern approach for API 30+
-            window.insetsController?.let { controller ->
-                controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            // Legacy approach for older APIs
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-            )
-        }
+        // Use WindowCompat which safely handles the DecorView creation
+        // and provides backward compatibility automatically.
+        val windowInsetsController = androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+
+        // Configure the behavior
+        windowInsetsController.systemBarsBehavior = 
+            androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        // Hide system bars (status bar and navigation bar)
+        windowInsetsController.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
     }
     
     override fun onResume() {

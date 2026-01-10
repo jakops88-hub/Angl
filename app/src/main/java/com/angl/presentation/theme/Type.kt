@@ -2,40 +2,46 @@ package com.angl.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import com.angl.R
 
 /**
  * Dark Luxury Typography System - "The Angl Aesthetic"
  * 
- * IMPORTANT: This implementation uses LOCAL font files placed in res/font/
- * Required files:
- * - cinzel_bold.ttf (Elegant serif for headlines)
- * - montserrat_medium.ttf (Modern sans-serif for body)
- * - montserrat_bold.ttf (Bold weight for emphasis)
+ * Uses Google Downloadable Fonts API for premium typography:
+ * - Cinzel: Elegant serif for all headings and important text
+ * - Montserrat: Modern sans-serif for body text and UI elements
  * 
- * Cinzel: Elegant serif for all headings and important text
- * Montserrat: Modern sans-serif for body text and UI elements
+ * This implementation downloads fonts on-demand from Google Fonts,
+ * preventing crashes from corrupt local font files.
  */
 
-// REPLACEMENT: Use System Fonts because local files are corrupt
-// Cinzel font family (elegant serif for headings)
-// Uses local TTF file: res/font/cinzel_bold.ttf
-// val CinzelFontFamily = FontFamily(
-//     Font(R.font.cinzel_bold, FontWeight.Bold)
-// )
-val CinzelFontFamily = FontFamily.Serif // Fallback to system Serif
+// Setup Google Fonts Provider
+val provider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage = "com.google.android.gms",
+    certificates = R.array.com_google_android_gms_fonts_certs
+)
 
-// Montserrat font family (modern sans-serif for body)
-// Uses local TTF files: res/font/montserrat_medium.ttf and montserrat_bold.ttf
-// val MontserratFontFamily = FontFamily(
-//     Font(R.font.montserrat_medium, FontWeight.Medium),
-//     Font(R.font.montserrat_bold, FontWeight.Bold)
-// )
-val MontserratFontFamily = FontFamily.SansSerif // Fallback to system SansSerif
+// Cinzel (Luxury Headline)
+val CinzelFont = GoogleFont("Cinzel")
+val CinzelFontFamily = FontFamily(
+    Font(googleFont = CinzelFont, fontProvider = provider, weight = FontWeight.Bold),
+    Font(googleFont = CinzelFont, fontProvider = provider, weight = FontWeight.Medium),
+    Font(googleFont = CinzelFont, fontProvider = provider, weight = FontWeight.Normal)
+)
+
+// Montserrat (Modern Body)
+val MontserratFont = GoogleFont("Montserrat")
+val MontserratFontFamily = FontFamily(
+    Font(googleFont = MontserratFont, fontProvider = provider, weight = FontWeight.Bold),
+    Font(googleFont = MontserratFont, fontProvider = provider, weight = FontWeight.Medium),
+    Font(googleFont = MontserratFont, fontProvider = provider, weight = FontWeight.Normal)
+)
 
 // Luxury Typography with custom LOCAL fonts and tight letter spacing
 val Typography = Typography(

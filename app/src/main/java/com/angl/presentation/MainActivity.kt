@@ -39,6 +39,8 @@ class MainActivity : ComponentActivity() {
         // Hide system bars for immersive full-screen experience
         setupImmersiveMode()
         
+        android.util.Log.d("AnglDebug", "MainActivity started")
+        
         setContent {
             AnglTheme {
                 Surface(

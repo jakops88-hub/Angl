@@ -89,6 +89,14 @@ class CameraViewModel @Inject constructor(
                 )
             }
         }
+        .catch { exception ->
+            // Handle errors in pose analysis gracefully to prevent app crashes
+            android.util.Log.e("CameraViewModel", "Error in pose analysis flow", exception)
+            emit(FeedbackStateExtended.Warning(
+                message = "ANALYSIS ERROR",
+                guidanceType = GuidanceType.None
+            ))
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

@@ -149,7 +149,7 @@ class PoseAnalyzer @Inject constructor() : ImageAnalysis.Analyzer {
         try {
             poseDetector.close()
             Log.d(TAG, "PoseAnalyzer closed successfully")
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Log.e(TAG, "Error closing PoseAnalyzer", e)
         }
     }

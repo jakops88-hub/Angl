@@ -133,8 +133,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     
-    // Note: Google Fonts dependency removed - using local TTF files in res/font/
-    // Place cinzel_bold.ttf, montserrat_medium.ttf, montserrat_bold.ttf in res/font/
+    // Google Fonts - Downloadable Fonts API
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.5.4")
 
     // CameraX
     val cameraxVersion = "1.3.1"
